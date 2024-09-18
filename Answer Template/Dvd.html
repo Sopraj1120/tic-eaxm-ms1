@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dvd</title>
+    <style>
+        #movieCardContainer {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .carddiv {
+            border: solid 5px black;
+            margin: 40px;
+            text-align: center;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .modal {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .modal-body {
+            font-size: 18px;
+        }
+
+        img {
+            height: 50px;
+        }
+
+        #openModalBtn {
+            display: block;
+            margin: 20px auto;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>DVD Page</h1>
+   
+    <button id="openModalBtn">Add DVD</button>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 class="modal-title">Add DVD</h2>
+            <div class="modal-body">
+                <form>
+                    <div>
+                        <label for="dvdId">dvdId :</label>
+                        <input type="text" id="dvdId" placeholder="Enter Dvd Id" required>
+                    </div>
+                    <div>
+                        <label for="dvdTitle"> dvdTitle :</label>
+                        <input type="text" id="dvdTitle" placeholder="Enter Dvd Title" required>
+                    </div>
+                    <div>
+                        <label for="releaseDate">releaseDate :</label>
+                        <input type="date" id="releaseDate" placeholder="Release Date" required>
+                    </div>
+                    <div>
+                        <label for="productionCompany">productionCompany :</label>
+                        <input type="text" id="productionCompany" placeholder="Production Company" required>
+                    </div>
+                    <div>
+                        <label for="movieImage">Image URL:</label>
+                        <input type="text" id="movieImage" placeholder="Enter image URL" required>
+                    </div>
+                    <button type="submit" id="submit-btn">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h3>Movie Collection</h3>
+        <div class="card-container" id="movieCardContainer"></div>
+    </div>
+
+    <script>
+        let Dvds = JSON.parse(localStorage.getItem('Dvds')) || [
+            { "dvdId": "DVD001", "dvdTitle": "The Matrix", "releaseDate": "1999-03-31", "productionCompany": "Warner Bros.", "image": "m1.jpg" },
+            { "dvdId": "DVD002", "dvdTitle": "Inception", "releaseDate": "2010-07-16", "productionCompany": "Legendary Pictures", "image": "m2.jpg" },
+            { "dvdId": "DVD003", "dvdTitle": "The Godfather", "releaseDate": "1972-03-24", "productionCompany": "Paramount Pictures", "image": "m3.jpg" },
+            { "dvdId": "DVD004", "dvdTitle": "Pulp Fiction", "releaseDate": "1994-10-14", "productionCompany": "Miramax Films", "image": "m4.jpg" }
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            localStorage.setItem('Dvds', JSON.stringify(Dvds));
+
+            let cardContainer = document.getElementById('movieCardContainer');
+            cardContainer.innerHTML = "";
+
+            Dvds.forEach((movie, index) => {
+                let cardDiv = document.createElement('div');
+                cardDiv.className = "carddiv";
+
+                cardDiv.innerHTML = `
+                    <img src="${movie.image}" alt="${movie.dvdTitle}">
+                    <h4>${movie.dvdTitle}</h4>
+                    <p>${movie.dvdId}</p>
+                    <p>${movie.releaseDate}</p>
+                `;
+
+           
+                       cardDiv.addEventListener('click', () => {
+                         window.location.href = `dvd_rental.html?videoId=${movie.dvdId}`;
+                       });
+
+
+              
+                cardContainer.appendChild(cardDiv);
+            });
+
+         
+            document.getElementById('submit-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+
+                let dvdId = document.getElementById('dvdId').value;
+                let dvdTitle = document.getElementById('dvdTitle').value;
+                let releaseDate = document.getElementById('releaseDate').value;
+                let productionCompany = document.getElementById('productionCompany').value;
+                let image = document.getElementById('movieImage').value;
+
+                Dvds.push({ dvdId, dvdTitle, releaseDate, productionCompany, image });
+
+                localStorage.setItem("Dvds", JSON.stringify(Dvds));
+                location.reload();
+            });
+
+            let modal = document.getElementById("myModal");
+            let openBtn = document.getElementById('openModalBtn');
+            let closeBtn = document.getElementsByClassName('close-btn')[0];
+
+            openBtn.addEventListener('click', () => {
+                modal.style.display = 'block';
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
